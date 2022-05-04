@@ -45,6 +45,10 @@ class Parser
         $this->treeRoot = new DocumentElement();
     }
 
+    public function getRoot() : ?DocumentElement {
+        return $this->treeRoot??null;
+    }
+
     /**
      * Adds a simple (text-replacement only) bbcode definition
      *
