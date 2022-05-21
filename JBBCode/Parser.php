@@ -549,6 +549,19 @@ class Parser
         /* There could be attributes. */
         list($tmpTagName, $options) = $this->parseOptions($tagContent);
 
+        //will: lets save any guid found, and take it out of the options here, once we take it out and the other thing left is
+        //an empty value with the tag name as the key, take that out
+        $save_guid = [];
+        if (isset($options['guid'])) { $save_guid['guid'] = $options['guid']; unset($options['guid']);}
+        if (count($save_guid) === 1 &&
+            count($options) === 1 &&
+            isset($options[$tmpTagName]) &&
+            empty($options[array_key_first($options)])
+        ) {
+            $options= [];
+        }
+        //:will
+
         // $tagPieces = explode('=', $tagContent);
         // $tmpTagName = $tagPieces[0];
 
@@ -589,6 +602,9 @@ class Parser
         /* If we're here, this is a valid opening tag. Let's make a new node for it. */
         $el = new ElementNode();
         $code = $this->getCode($actualTagName, !empty($options));
+        //will: once the danger is passed, give back the guid so the parser puts it in the attributes
+        $options = array_merge($options,$save_guid);
+        //:will
         $el->setCodeDefinition($code);
         if (!empty($options)) {
             /* We have an attribute we should save. */
